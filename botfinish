@@ -1,0 +1,80 @@
+import discord
+import os
+import random
+from discord.ext import commands
+import requests
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='>', intents=intents)
+cp=0
+
+@bot.command()
+async def cop(ctx, sayi:int):
+    global cp
+    cp=sayi+cp
+    await ctx.send(f"Bu gün {sayi} çöp toparladın?")
+    await ctx.send(f"Bu gün ki çöp puanın şöyle: {cp}")
+    await ctx.send("Çevre için daha da gayret etmelisin! Bunun karşılığını illa ki ileride alırsın!")
+    await ctx.send(f"'{ctx.author}' kişisi tarafından istendi")
+
+def getDuckMem():
+    url = 'https://random.dog/woof.json'
+    response = requests.get(url)
+    data = response.json()
+    return data['url']
+
+
+@bot.command('dog')
+async def dog(ctx):
+    duckUrl = getDuckMem()
+    await ctx.send(duckUrl)
+
+@bot.event
+async def on_ready():
+    print(f'We have logged in as {bot.user}')
+
+
+@bot.listen()
+async def on_message(message):
+    if message.author != bot.user :
+        if message.content.startswith('mehmet'):
+            await message.channel.send("biri benden bahsetti sanırım")
+
+
+@bot.listen()
+async def on_message(message):
+    if message.author != bot.user :
+        if message.content.startswith('yunus'):
+            await message.channel.send("merhaba :D")
+
+
+@bot.command()
+async def clear(ctx, amount:int):
+    await ctx.channel.purge(limit=amount)
+
+@bot.command()
+async def mem(ctx):
+    randomOranArray =random.choices(os.listdir('image'), weights=(100,20,10) , k=1)
+
+    with open(f'image/{randomOranArray[0]}', 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+    
+@bot.command()
+async def pasa(ctx):
+    randomOranArray =random.choices(os.listdir('pasa'), weights=(15,10) , k=1)
+
+    with open(f'pasa/{randomOranArray[0]}', 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+
+@bot.command()
+async def hayvanmem(ctx):
+    randomOranArray =random.choices(os.listdir('hayvanimage'), weights=(60,30,10) , k=1)
+    with open(f'hayvanimage/{randomOranArray[0]}','rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+bot.run('-')    
+
